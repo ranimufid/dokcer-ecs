@@ -8,10 +8,10 @@ node {
         sh "terraform --version"
     }
     stage ('terraform setup'){
-        environment {
-            TF_S3_STATE_BUCKET = "tf-state-file-myjenkins"
-            TF_S3_STATE_BUCKET_KEY = "dokcer-ecs"
-        }
+        // environment {
+        //     TF_S3_STATE_BUCKET = "tf-state-file-myjenkins"
+        //     TF_S3_STATE_BUCKET_KEY = "dokcer-ecs"
+        // }
         // terraform_init();
         initialize_remote_state();
     }
