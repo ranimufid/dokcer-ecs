@@ -8,15 +8,17 @@ node {
         sh "terraform --version"
     }
     stage ('terraform setup'){
-        sh 'export TF_S3_STATE_BUCKET="tf-state-file-myjenkins"'
-        sh 'TF_S3_STATE_BUCKET_KEY="dokcer-ecs"'
-        sh 'echo $TF_S3_STATE_BUCKET_KEY'
-        sh 'terraform remote config \
-        -backend=s3 \
-        -backend-config="bucket=$TF_S3_STATE_BUCKET" \
-        -backend-config="key=$TF_S3_STATE_BUCKET_KEY/terraform.tfstate" \
-        -backend-config="region=eu-central-1" \
-        -backend-config="acl=bucket-owner-full-control"'
+         withEnv(["TF_S3_STATE_BUCKET=tf-state-file-myjenkins"]) {
+        // sh 'export TF_S3_STATE_BUCKET="tf-state-file-myjenkins"'
+        // sh 'TF_S3_STATE_BUCKET_KEY="dokcer-ecs"'
+        // sh 'echo $TF_S3_STATE_BUCKET_KEY'
+            sh 'terraform remote config \
+            -backend=s3 \
+            -backend-config="bucket=$TF_S3_STATE_BUCKET" \
+            -backend-config="key=$TF_S3_STATE_BUCKET_KEY/terraform.tfstate" \
+            -backend-config="region=eu-central-1" \
+            -backend-config="acl=bucket-owner-full-control"'
+        }
     }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
