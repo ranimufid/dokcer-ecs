@@ -14,8 +14,8 @@ node {
         }
         sh 'terraform remote config \
         -backend=s3 \
-        -backend-config="bucket=${S3_BUCKET}" \
-        -backend-config="key=${S3_KEY}/terraform.tfstate" \
+        -backend-config="bucket=${TF_S3_STATE_BUCKET}" \
+        -backend-config="key=${TF_S3_STATE_BUCKET_KEY}/terraform.tfstate" \
         -backend-config="region=eu-central-1" \
         -backend-config="acl=bucket-owner-full-control"'
     }
