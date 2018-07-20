@@ -13,7 +13,7 @@ node {
         sh "terraform --version"
     }
     stage ('terraform setup'){
-        sh 'echo $TF_S3_STATE_BUCKET'
+        sh 'echo $TF_S3_STATE_BUCKET_KEY'
         sh 'terraform remote config \
         -backend=s3 \
         -backend-config="bucket=${TF_S3_STATE_BUCKET}" \
