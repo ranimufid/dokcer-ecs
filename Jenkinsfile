@@ -1,4 +1,9 @@
 node {
+    environment {
+        TF_S3_STATE_BUCKET = "tf-state-file-myjenkins"
+        TF_S3_STATE_BUCKET_KEY = "dokcer-ecs"
+    }
+
     stage('scm'){
         git url: 'git@github.com:ranimufid/dokcer-ecs.git'
     }
@@ -8,10 +13,6 @@ node {
         sh "terraform --version"
     }
     stage ('terraform setup'){
-        environment {
-            TF_S3_STATE_BUCKET = "tf-state-file-myjenkins"
-            TF_S3_STATE_BUCKET_KEY = "dokcer-ecs"
-        }
         sh 'terraform remote config \
         -backend=s3 \
         -backend-config="bucket=${TF_S3_STATE_BUCKET}" \
