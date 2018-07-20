@@ -7,7 +7,7 @@ pipeline {
     }
 
     stages {
-        stage('scm'){
+        stage("scm"){
             steps {
                 git url: 'git@github.com:ranimufid/dokcer-ecs.git'
             }
