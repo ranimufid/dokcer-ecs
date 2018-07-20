@@ -2,6 +2,10 @@ node {
     stage('scm'){
         git url: 'git@github.com:ranimufid/dokcer-ecs.git'
     }
+    stage ('install terraform'){
+        downloadTerraform()
+        env.PATH = "${env.PATH}:${env.WORKSPACE}"
+    }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
         try {
@@ -13,4 +17,13 @@ node {
                 currentBuild.result = 'UNSTABLE'
             }
     }
+}
+
+// Functions
+def downloadTerraform(){
+  if (!fileExists('terraform')) {
+    sh "curl -o  terraform_0.11.7_linux_amd64.zip https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip && unzip -o terraform_0.11.7_linux_amd64.zip && chmod 777 terraform"
+  } else {
+    println("terraform already installed")
+  }
 }
