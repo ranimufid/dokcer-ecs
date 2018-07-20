@@ -16,12 +16,12 @@ node {
             // Output Terraform version
             // sh "terraform --version"
             //Remove the terraform state file so we always start from a clean state
-            if (fileExists(".terraform/terraform.tfstate")) {
-                sh "rm -rf .terraform/terraform.tfstate"
-            }
-            if (fileExists("status")) {
-                sh "rm status"
-            }
+            // if (fileExists(".terraform/terraform.tfstate")) {
+            //     sh "rm -rf .terraform/terraform.tfstate"
+            // }
+            // if (fileExists("status")) {
+            //     sh "rm status"
+            // }
             // sh "./init"
             // sh "terraform get"
             // sh "set +e; terraform plan -out=plan.out -detailed-exitcode; echo \$? &gt; status"
