@@ -7,10 +7,10 @@ pipeline {
     }
 
     stages {
-        stage("scm"){
-            steps {
+        stage('scm'){
+            // steps {
                 git url: 'git@github.com:ranimufid/dokcer-ecs.git'
-            }
+            // }
         }
         stage ('install terraform'){
             steps {
