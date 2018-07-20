@@ -1,7 +1,6 @@
 node {
-    sh 'export TF_S3_STATE_BUCKET = "tf-state-file-myjenkins"'
-    sh 'TF_S3_STATE_BUCKET_KEY = "dokcer-ecs"'
-
+    // sh 'export TF_S3_STATE_BUCKET = "tf-state-file-myjenkins"'
+    // sh 'TF_S3_STATE_BUCKET_KEY = "dokcer-ecs"'
     stage('scm'){
         git url: 'git@github.com:ranimufid/dokcer-ecs.git'
     }
