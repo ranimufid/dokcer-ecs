@@ -1,4 +1,4 @@
-node {
+pipeline {
     environment {
         TF_S3_STATE_BUCKET = "tf-state-file-myjenkins"
         TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
