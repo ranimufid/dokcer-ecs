@@ -13,7 +13,7 @@ node {
         //     TF_S3_STATE_BUCKET_KEY = "dokcer-ecs"
         // }
         // terraform_init();
-        initialize_remote_state();
+        initialize_remote_state()
     }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
