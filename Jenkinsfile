@@ -11,14 +11,14 @@ node {
             // }
         }
         stage ('install terraform'){
-            steps {
+            // steps {
                 def tfHome = tool name: 'Terraform', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
                 env.PATH = "${tfHome}:${env.PATH}"
                 sh "terraform --version"
-            }
+            // }
         }
         stage ('terraform setup'){
-            steps {
+            // steps {
                 sh 'echo $TF_S3_STATE_BUCKET_KEY'
                 sh 'terraform remote config \
                 -backend=s3 \
@@ -26,7 +26,7 @@ node {
                 -backend-config="key=${TF_S3_STATE_BUCKET_KEY}/terraform.tfstate" \
                 -backend-config="region=eu-central-1" \
                 -backend-config="acl=bucket-owner-full-control"'
-            }
+            // }
         }
         stage ('slack'){
             steps {
