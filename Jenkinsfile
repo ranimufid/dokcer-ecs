@@ -4,8 +4,8 @@ node {
     stage 'Checkout'
  
     // // Get some code from a GitHub repository
-    git url: 'git@github.com:ranimufid/dokcer-ecs.git'
- 
+    // git url: 'git@github.com:ranimufid/dokcer-ecs.git'
+    checkout scm 
     // Get the Terraform tool.
     // def tfHome = tool name: 'Terraform', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
     // env.PATH = "${tfHome}:${env.PATH}"
