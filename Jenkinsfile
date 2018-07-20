@@ -4,7 +4,7 @@ node {
         TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
     }
 
-    stages {
+    // stages {
         stage('scm'){
             // steps {
                 git url: 'git@github.com:ranimufid/dokcer-ecs.git'
@@ -41,7 +41,7 @@ node {
                 }
             }
         }
-    }
+    // }
 }
 
 // Functions
