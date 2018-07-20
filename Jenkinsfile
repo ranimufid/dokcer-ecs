@@ -12,12 +12,12 @@ node {
         // sh 'export TF_S3_STATE_BUCKET="tf-state-file-myjenkins"'
         // sh 'TF_S3_STATE_BUCKET_KEY="dokcer-ecs"'
         // sh 'echo $TF_S3_STATE_BUCKET_KEY'
-            sh 'terraform remote config \
-            -backend=s3 \
-            -backend-config=\"bucket=$TF_S3_STATE_BUCKET\" \
-            -backend-config=\"key=$TF_S3_STATE_BUCKET_KEY/terraform.tfstate\" \
-            -backend-config=\"region=eu-central-1\" \
-            -backend-config=\"acl=bucket-owner-full-control\"'
+            sh 'terraform init \
+              -backend-config="bucket=$TF_S3_STATE_BUCKET" \
+              -backend-config="key=$TF_S3_STATE_BUCKET_KEY/terraform.tfstate" \
+              -backend-config="region=eu-central-1" \
+              -backend-config="private=private" \
+              -backend-config="encrypt=true"'
         }
     }
     stage ('slack'){
