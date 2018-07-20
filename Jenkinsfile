@@ -36,16 +36,16 @@ node {
             //     currentBuild.result = 'FAILURE'
             // }
             // if (exitCode == "2") {
-            //     stash name: "plan", includes: "plan.out"
-            //     slackSend channel: '#ci', color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
-            //     try {
-            //         input message: 'Apply Plan?', ok: 'Apply'
-            //         apply = true
-            //     } catch (err) {
-            //         slackSend channel: '#ci', color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
-            //         apply = false
-            //         currentBuild.result = 'UNSTABLE'
-            //     }
+                // stash name: "plan", includes: "plan.out"
+                slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                try {
+                    input message: 'Apply Plan?', ok: 'Apply'
+                    apply = true
+                } catch (err) {
+                    slackSend color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    apply = false
+                    currentBuild.result = 'UNSTABLE'
+                }
             // }
  
             // if (apply) {
