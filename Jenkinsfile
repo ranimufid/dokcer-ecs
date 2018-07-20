@@ -3,8 +3,8 @@ node {
         git url: 'git@github.com:ranimufid/dokcer-ecs.git'
     }
     stage ('install terraform'){
-        downloadTerraform()
-        env.PATH = "${env.PATH}:${env.WORKSPACE}"
+        def tfHome = tool name: 'Terraform', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+        env.PATH = "${tfHome}:${env.PATH}"
     }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
