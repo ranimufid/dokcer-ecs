@@ -33,7 +33,7 @@ node {
 // }
 
 def initialize_remote_state() {
-  stage 'initialize remote state'
+  // stage 'initialize remote state'
   withEnv(["S3_BUCKET=$TF_S3_STATE_BUCKET","S3_KEY=$TF_S3_STATE_BUCKET_KEY"]) {
     _sh '''\
       terraform remote config \
