@@ -5,6 +5,15 @@ node {
     stage ('install terraform'){
         def tfHome = tool name: 'Terraform', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
         env.PATH = "${tfHome}:${env.PATH}"
+        sh "terraform --version"
+    }
+    stage ('terraform setup'){
+        environment {
+            TF_S3_STATE_BUCKET = "tf-state-file-myjenkins"
+            TF_S3_STATE_BUCKET_KEY = "dokcer-ecs"
+        }
+        // terraform_init();
+        initialize_remote_state();
     }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
@@ -20,10 +29,19 @@ node {
 }
 
 // Functions
-def downloadTerraform(){
-  if (!fileExists('terraform')) {
-    sh "curl -o  terraform_0.11.7_linux_amd64.zip https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip && unzip -o terraform_0.11.7_linux_amd64.zip && chmod 777 terraform"
-  } else {
-    println("terraform already installed")
+// def terraform_init(){
+// }
+
+def initialize_remote_state() {
+  stage 'initialize remote state'
+  withEnv(["S3_BUCKET=$TF_S3_STATE_BUCKET","S3_KEY=$TF_S3_STATE_BUCKET_KEY"]) {
+    _sh '''\
+      terraform remote config \
+        -backend=s3 \
+        -backend-config="bucket=${S3_BUCKET}" \
+        -backend-config="key=${S3_KEY}/terraform.tfstate" \
+        -backend-config="region=eu-central-1" \
+        -backend-config="acl=bucket-owner-full-control"
+    '''.stripIndent()
   }
 }
