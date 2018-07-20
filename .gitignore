@@ -18,3 +18,10 @@
 
 .env
 dump.rdb
+
+#ignore terraform related files
+**/.terraform*
+*.tfstate
+**/terraform.tfstate.backup
+**/terraform.tfstate.d
+
