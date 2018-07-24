@@ -1,5 +1,5 @@
 node {
-    stage('scm'){
+    stage('checkout'){
         git url: 'git@github.com:ranimufid/dokcer-ecs.git'
     }
     stage ('install terraform'){
@@ -7,19 +7,23 @@ node {
         env.PATH = "${tfHome}:${env.PATH}"
         sh "terraform --version"
     }
-    stage ('terraform setup'){
-         withEnv(["TF_S3_STATE_BUCKET=tf-state-file-myjenkins", "TF_S3_STATE_BUCKET_KEY=dokcer-ecs"]) {
-        // sh 'export TF_S3_STATE_BUCKET="tf-state-file-myjenkins"'
-        // sh 'TF_S3_STATE_BUCKET_KEY="dokcer-ecs"'
-        // sh 'echo $TF_S3_STATE_BUCKET_KEY'
-            sh 'cd terraform/aws-rds; \
-                terraform init \
-                  -backend-config="bucket=$TF_S3_STATE_BUCKET" \
-                  -backend-config="key=$TF_S3_STATE_BUCKET_KEY/terraform.tfstate" \
-                  -backend-config="region=eu-central-1" \
-                  -backend-config="private=private" \
-                  -backend-config="encrypt=true"'
-        }
+    stage ('terraform plan'){
+        //  withEnv(["TF_S3_STATE_BUCKET=tf-state-file-myjenkins", "TF_S3_STATE_BUCKET_KEY=dokcer-ecs"]) {
+        //     sh 'cd terraform/aws-rds; \
+        //         terraform init \
+        //           -backend-config="bucket=$TF_S3_STATE_BUCKET" \
+        //           -backend-config="key=$TF_S3_STATE_BUCKET_KEY/terraform.tfstate" \
+        //           -backend-config="region=eu-central-1" \
+        //           -backend-config="private=private" \
+        //           -backend-config="encrypt=true"'
+        // }
+        withCredentials([[
+            $class: "AmazonWebServicesCredentialsBinding",
+            credentialsId: "rds-s3-access",
+            accessKeyVariable: "AWS_ACCESS_KEY_ID",
+            secretKeyVariable: "AWS_SECRET_ACCESS_KEY"]]) {
+            sh  "aws --version"
+          }
     }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
