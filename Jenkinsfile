@@ -29,19 +29,10 @@ node {
     stage ('checking out all repos'){
         parallel (
             "task 1" : {
-                node {
-                    sh "terraform --version"
-                }
+                sh "terraform --version"
             }
             "task 2" : {
-                node {
-                    sh "terraform --version"
-                }
-            }
-            "task 3" : {
-                node {
-                    sh "terraform --version"
-                }
+                sh "terraform --version"
             }
         )
     }
