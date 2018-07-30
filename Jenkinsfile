@@ -28,16 +28,17 @@ node {
     }
     stage ('checking out all repos'){
         parallel {
-            stage ("task 1") {
+            "task 1": {
                 sh "terraform --version"
             }
-            stage ("task 2") {
+            "task 2": {
                 sh "terraform --version"
             }
-            stage ("task 3") {
+            "task 3": {
                 sh "terraform --version"
             }
         }
+      }
     }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
