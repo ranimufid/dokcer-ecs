@@ -26,6 +26,19 @@ node {
             sh "aws s3 ls"
           }
     }
+    stage ('checking out all repos'){
+        parallel {
+            stage ("task 1") {
+                sh "terraform --version"
+            }
+            stage ("task 2") {
+                sh "terraform --version"
+            }
+            stage ("task 3") {
+                sh "terraform --version"
+            }
+        }
+    }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
         try {
@@ -38,21 +51,3 @@ node {
         }
     }
 }
-
-// Functions
-// def terraform_init(){
-// }
-
-// def initialize_remote_state() {
-//   // stage 'initialize remote state'
-//   withEnv(["S3_BUCKET=$TF_S3_STATE_BUCKET","S3_KEY=$TF_S3_STATE_BUCKET_KEY"]) {
-//     _sh '''\
-//       terraform remote config \
-//         -backend=s3 \
-//         -backend-config="bucket=${S3_BUCKET}" \
-//         -backend-config="key=${S3_KEY}/terraform.tfstate" \
-//         -backend-config="region=eu-central-1" \
-//         -backend-config="acl=bucket-owner-full-control"
-//     '''.stripIndent()
-//   }
-// }
