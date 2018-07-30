@@ -26,19 +26,19 @@ node {
             sh "aws s3 ls"
           }
     }
-    stage ('checking out all repos'){
-        parallel {
-            "task 1": {
-                sh "terraform --version"
-            }
-            "task 2": {
-                sh "terraform --version"
-            }
-            "task 3": {
-                sh "terraform --version"
-            }
-        }
-    }
+    // stage ('checking out all repos'){
+    //     parallel {
+    //         "task 1": {
+    //             sh "terraform --version"
+    //         }
+    //         "task 2": {
+    //             sh "terraform --version"
+    //         }
+    //         "task 3": {
+    //             sh "terraform --version"
+    //         }
+    //     }
+    // }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
         try {
