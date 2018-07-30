@@ -38,7 +38,6 @@ node {
                 sh "terraform --version"
             }
         }
-      }
     }
     stage ('slack'){
         slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
