@@ -30,7 +30,7 @@ node {
         parallel (
             "task 1" : {
                 sh "terraform --version"
-            }
+            },
             "task 2" : {
                 sh "terraform --version"
             }
