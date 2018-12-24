@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'terraform-base:latest'
-      registryUrl 'https://hub.docker.com/r/semperfi93/terraform-base'
+      url 'https://hub.docker.com/r/semperfi93/terraform-base'
     }
   }
   environment {
