@@ -1,5 +1,7 @@
 pipeline {
-  agent any
+  agent {
+     docker { image: 'semperfi93/terraform-base' }
+  }
   environment {
      AWS_DEFAULT_REGION = 'eu-central-2'
   }
@@ -8,7 +10,6 @@ pipeline {
     stage('Validate & lint') {
       parallel {
         stage('terraform fmt') {
-          agent { docker { image 'simonmcc/hashicorp-pipeline:latest' } }
           steps {
             checkout scm
             sh "cd terraform/aws-rds/ && terraform fmt -check=true -diff=true"
