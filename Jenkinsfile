@@ -1,6 +1,9 @@
 pipeline {
   agent {
-     docker { image 'semperfi93/terraform-base' }
+    docker {
+      image 'semperfi93/terraform-base'
+      registryUrl 'https://hub.docker.com/r/semperfi93/terraform-base'
+    }
   }
   environment {
      AWS_DEFAULT_REGION = 'eu-central-2'
