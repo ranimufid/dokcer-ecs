@@ -2,6 +2,7 @@ pipeline {
   agent {
     docker {
       image 'semperfi93/terraform-base:latest'
+      args '-it --entrypoint=/bin/bash'
       registryUrl 'https://hub.docker.com/r/semperfi93/terraform-base'
     }
   }
