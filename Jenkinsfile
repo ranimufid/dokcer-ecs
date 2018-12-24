@@ -27,7 +27,7 @@ pipeline {
     agent {
         docker { 
             image 'hashicorp/terraform:light' 
-            args '-it --entrypoint=/bin/sh'
+            args '-it --entrypoint=bash'
         }
     }
     stages {
