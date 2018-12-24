@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'semperfi93/terraform-base:latest'
-      args '-it --entrypoint=bash'
+      args '-it --entrypoint=/bin/bash'
       registryUrl 'https://hub.docker.com/r/semperfi93/terraform-base'
     }
   }
@@ -11,14 +11,10 @@ pipeline {
   }
 
   stages {
-    stage('Validate & lint') {
-      parallel {
-        stage('terraform fmt') {
-          steps {
-            checkout scm
-            sh "cd terraform/aws-rds/ && terraform fmt -check=true -diff=true"
-          }
-        }
+    stage('terraform fmt') {
+      steps {
+        checkout scm
+        sh "cd terraform/aws-rds/ && terraform fmt -check=true -diff=true"
       }
     }
   }
