@@ -44,4 +44,5 @@ variable "password" {
 
 variable "port" {
   description = "The port on which your db will receive connections: 3306 for MySQL, 5432 for Postgres"
+  default     = 3306
 }
