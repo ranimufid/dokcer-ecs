@@ -4,7 +4,7 @@ variable "identifier" {
 }
 
 variable "storage" {
-  default = "5"
+  default     = "5"
   description = "Storage size in GB"
 }
 
@@ -15,6 +15,7 @@ variable "engine" {
 
 variable "engine_version" {
   description = "Engine version"
+
   default = {
     mysql    = "5.6.22"
     postgres = "9.4.1"
