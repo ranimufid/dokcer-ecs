@@ -9,7 +9,7 @@ variable "storage" {
 }
 
 variable "engine" {
-  # default = "mysql"
+  default = "mysql"
   description = "Engine type, example: mysql or postgres"
 }
 
