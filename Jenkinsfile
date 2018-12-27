@@ -1,9 +1,9 @@
 pipeline {
   agent any
   environment {
-    AWS_CREDS = credentials('snook-access');
-    AWS_ACCESS_KEY_ID = "${env.AWS_ACCESS_KEY_ID}"
-    AWS_SECRET_ACCESS_KEY = "${env.AWS_SECRET_ACCESS_KEY}"
+    AWS_CREDS = credentials('terra-access');
+    AWS_ACCESS_KEY_ID = "${echo $AWS_CREDS | cut -d ":" -f1}"
+    AWS_SECRET_ACCESS_KEY = "${echo $AWS_CREDS | cut -d ":" -f1}"
     AWS_DEFAULT_REGION = 'eu-central-1'
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY= 'dokcer-ecs'
