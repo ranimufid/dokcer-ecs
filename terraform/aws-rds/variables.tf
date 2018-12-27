@@ -39,7 +39,7 @@ variable "username" {
 
 variable "password" {
   description = "DB Password"
-  password    = "supersecretpassword"
+  default     = "supersecretpassword"
 }
 
 variable "port" {
