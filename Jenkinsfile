@@ -40,7 +40,7 @@ pipeline {
     }
     stage ('slack'){
       steps {
-        sh "echo ${env.TF_LANDSCAPE_PLAN}"
+        sh "echo ${TF_LANDSCAPE_PLAN}"
         slackSend (color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ```hello snookums sh(cat terraform/aws-rds/landscape-plan.txt)```", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
         script {
           try {
