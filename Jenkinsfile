@@ -29,10 +29,7 @@ pipeline {
     }
     stage ('terraform plan'){
       steps {
-        sh "aws --version"
-        sh "aws s3 ls"
-        sh 'cd terraform/aws-rds; \
-        terraform plan | landscape '
+        sh 'cd terraform/aws-rds && terraform plan -out planned | landscape'
       }
     }
   }
