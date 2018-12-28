@@ -34,7 +34,7 @@ pipeline {
     }
     stage ('slack'){
       steps {
-        slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+        slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", token: '${SLACK_TOKEN}'
         script {
           try {
             input message: 'Apply Plan?', ok: 'Apply'
