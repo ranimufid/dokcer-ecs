@@ -30,18 +30,17 @@ pipeline {
     stage ('terraform plan'){
       steps {
         sh 'env'
-        // sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape | tee landscape-plan.txt'
+        sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape | tee landscape-plan.txt'
         script {
-          TF_LANDSCAPE_PLAN= sh(returnStdout: true, script: 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape')
+          TF_LANDSCAPE_PLAN= sh(returnStdout: true, script: 'cat terraform/aws-rds/landscape-plan.txt')
           sh "echo ${env.TF_LANDSCAPE_PLAN}"
         }
-        // sh "echo ${TF_LANDSCAPE_PLAN}"
-        sh 'env'
+        sh "echo ${env.TF_LANDSCAPE_PLAN}"
       }
     }
     stage ('slack'){
       steps {
-        slackSend (color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ```hello snookums ${env.TF_LANDSCAPE_PLAN}```", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+        slackSend (color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ```hello snookums sh(cat terraform/aws-rds/landscape-plan.txt)```", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
         script {
           try {
             input message: 'Apply Plan?', ok: 'Apply'
