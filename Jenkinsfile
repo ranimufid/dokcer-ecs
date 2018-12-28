@@ -35,7 +35,7 @@ pipeline {
     }
     stage ('slack'){
       steps {
-        slackSend (color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", teamDomain: ${env.SLACK_TEAM_DOMAIN},token: ${env.SLACK_TOKEN})
+        slackSend (color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", teamDomain: '${env.SLACK_TEAM_DOMAIN}',token: '${env.SLACK_TOKEN}')
         script {
           try {
             input message: 'Apply Plan?', ok: 'Apply'
