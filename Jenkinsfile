@@ -30,7 +30,8 @@ pipeline {
     stage ('terraform plan'){
       steps {
         sh 'env'
-        sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape'
+        sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape | read PLAN_OUTPUT'
+        sh "echo ${PLAN_OUTPUT}"
       }
     }
     stage ('slack'){
@@ -41,7 +42,7 @@ pipeline {
             input message: 'Apply Plan?', ok: 'Apply'
             apply = true
           } catch (err) {
-              slackSend color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+              slackSend (color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
               apply = false
               currentBuild.result = 'UNSTABLE'
           }
