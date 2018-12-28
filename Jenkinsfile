@@ -34,7 +34,7 @@ pipeline {
         script {
           TF_LANDSCAPE_PLAN= sh(returnStdout: true, script: 'cat terraform/aws-rds/landscape-plan.txt')
         }
-        sh 'echo ${env.TF_LANDSCAPE_PLAN}'
+        sh "echo ${env.TF_LANDSCAPE_PLAN}"
       }
     }
     stage ('slack'){
