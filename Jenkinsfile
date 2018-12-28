@@ -16,8 +16,6 @@ pipeline {
     }
     stage ('terraform init'){
       steps {
-        sh "aws --version"
-        sh "aws s3 ls"
         sh 'cd terraform/aws-rds; \
         terraform init \
           -backend-config="bucket=$TF_S3_STATE_BUCKET" \
@@ -30,7 +28,11 @@ pipeline {
     stage ('terraform plan'){
       steps {
         sh 'env'
-        sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an)-plan -input=false -detailed-exitcode | landscape'
+        sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape'
+        timeout(time: 1, unit: 'HOURS') {
+          userInput = input message: 'Are you sure you would like to apply these to testing?',
+          parameters: [string(defaultValue: '', description: 'Your name', name: 'name')]
+        }
       }
     }
   }
