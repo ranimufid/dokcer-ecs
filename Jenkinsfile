@@ -29,7 +29,7 @@ pipeline {
     }
     stage ('terraform plan'){
       steps {
-        sh 'cd terraform/aws-rds && terraform plan -out planned | landscape'
+        sh 'cd terraform/aws-rds && terraform plan -out planned -input=false -detailed-exitcode | landscape'
       }
     }
   }
