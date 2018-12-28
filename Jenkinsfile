@@ -30,9 +30,9 @@ pipeline {
     stage ('terraform plan'){
       steps {
         sh 'env'
-        sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape | tee landscape-plan.txt'
+        // sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape | tee landscape-plan.txt'
         script {
-          TF_LANDSCAPE_PLAN= sh(returnStdout: true, script: 'cat terraform/aws-rds/landscape-plan.txt')
+          TF_LANDSCAPE_PLAN= sh(returnStdout: true, script: 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape')
         }
         sh "echo ${env.TF_LANDSCAPE_PLAN}"
       }
