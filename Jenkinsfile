@@ -32,7 +32,7 @@ pipeline {
         // sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape | tee landscape-plan.txt'
         sh 'env'
         script {
-          env.TF_LANDSCAPE_PLAN= sh returnStdout: true, script: '''cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape'''
+          TF_LANDSCAPE_PLAN= sh returnStdout: true, script: '''cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape'''
           // sh "echo ${env.TF_LANDSCAPE_PLAN}"
         }
         // sh "echo ${env.TF_LANDSCAPE_PLAN}"
