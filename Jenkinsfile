@@ -1,11 +1,12 @@
 pipeline {
   agent any
   environment {
-    AWS_ACCESS_KEY_ID = credentials('terra-access-key	');
+    AWS_ACCESS_KEY_ID = credentials('terra-access-key');
     AWS_SECRET_ACCESS_KEY = credentials('terra-secret-access-key');
     AWS_DEFAULT_REGION = 'eu-central-1'
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
-    TF_S3_STATE_BUCKET_KEY= 'dokcer-ecs'
+    TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
+    SLACK_TOKEN = credentials('slack_tocken');
   }   
   stages {
     stage('terraform fmt') {
@@ -29,10 +30,17 @@ pipeline {
       steps {
         sh 'env'
         sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape'
-        timeout(time: 1, unit: 'HOURS') {
-          userInput = input message: 'Are you sure you would like to apply these to testing?',
-          parameters: [string(defaultValue: '', description: 'Your name', name: 'name')]
-        }
+      }
+    }
+    stage ('slack'){
+      slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+      try {
+          input message: 'Apply Plan?', ok: 'Apply'
+          apply = true
+      } catch (err) {
+          slackSend color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+          apply = false
+          currentBuild.result = 'UNSTABLE'
       }
     }
   }
