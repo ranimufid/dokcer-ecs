@@ -34,7 +34,6 @@ pipeline {
     }
     stage ('slack'){
       steps {
-        echo "${TF_LANDSCAPE_PLAN}"
         slackSend (color: 'good', message: "A new terraform plan was generated (<https://9bbea42b.ngrok.io/job/docker-ecs/job/terraform-pipeline-from-scm/${BUILD_ID}/}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
         script {
           try {
