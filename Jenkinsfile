@@ -7,6 +7,7 @@ pipeline {
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
     SLACK_TOKEN = credentials('slack_tocken');
+    SLACK_TEAM_DOMAIN = 'semperfi-ranit';
   }   
   stages {
     stage('terraform fmt') {
@@ -34,7 +35,7 @@ pipeline {
     }
     stage ('slack'){
       steps {
-        slackSend color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", token: '${SLACK_TOKEN}'
+        slackSend (color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", teamDomain: ${env.SLACK_TEAM_DOMAIN},token: ${env.SLACK_TOKEN})
         script {
           try {
             input message: 'Apply Plan?', ok: 'Apply'
