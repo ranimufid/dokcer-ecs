@@ -32,14 +32,14 @@ pipeline {
         sh 'env'
         sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape | tee landscape-plan.txt'
         script {
-          sh 'export TF_LANDSCAPE_PLAN=$(cat terraform/aws-rds/landscape-plan.txt)'
+          TF_LANDSCAPE_PLAN= sh(returnStdout: true, script: 'cat terraform/aws-rds/landscape-plan.txt')
         }
-        sh 'env'
+        sh 'echo ${TF_LANDSCAPE_PLAN}'
       }
     }
     stage ('slack'){
       steps {
-        slackSend (color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+        slackSend (color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ```hello snookums```", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
         script {
           try {
             input message: 'Apply Plan?', ok: 'Apply'
