@@ -35,10 +35,11 @@ pipeline {
             script: 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape',
             returnStdout: true
           ).trim()
+          sh 'export TF_LANDSCAPE_PLAN'
         }
         // sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape | tee TF_LANDSCAPE_PLAN'
         // sh 'export TF_LANDSCAPE_PLAN=\$(cat terraform/aws-rds/landscape-plan.txt)'
-        sh 'export $TF_LANDSCAPE_PLAN'
+        // sh 'export $TF_LANDSCAPE_PLAN'
         sh 'env'
       }
     }
