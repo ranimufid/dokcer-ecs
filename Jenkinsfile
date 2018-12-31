@@ -4,11 +4,11 @@ pipeline {
     AWS_ACCESS_KEY_ID = credentials('terra-access-key');
     AWS_SECRET_ACCESS_KEY = credentials('terra-secret-access-key');
     AWS_DEFAULT_REGION = 'eu-central-1'
+    SLACK_TOKEN = credentials('slack_tocken');
+    SLACK_TEAM_DOMAIN = credentials('semperfi-ranit');
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
-    SLACK_TOKEN = credentials('slack_tocken');
-    SLACK_TEAM_DOMAIN = 'semperfi-ranit';
-  }   
+  }
   stages {
     stage('terraform fmt') {
       steps {
