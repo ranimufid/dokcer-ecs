@@ -5,7 +5,7 @@ pipeline {
     AWS_SECRET_ACCESS_KEY = credentials('terra-secret-access-key');
     AWS_DEFAULT_REGION = 'eu-central-1'
     SLACK_TOKEN = credentials('slack_tocken');
-    SLACK_TEAM_DOMAIN = credentials('semperfi-ranit');
+    SLACK_TEAM_DOMAIN = credentials('slack_team_domain');
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
   }
