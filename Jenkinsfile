@@ -58,7 +58,7 @@ pipeline {
               try {
                 input message: 'Apply Plan?', ok: 'Apply', parameters: [
                   [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this']
-                  ])
+                  ]
                 apply = true
               } catch (err) {
                 apply = false
