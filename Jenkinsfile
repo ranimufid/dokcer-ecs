@@ -47,6 +47,13 @@ pipeline {
               }
             }
           }
+          stage ('apply'){
+            script {
+              if (apply) {
+                sh 'env'
+              }
+            }
+          }
         }
       }
     }
