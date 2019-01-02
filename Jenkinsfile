@@ -16,7 +16,7 @@ pipeline {
   stages {
     stage ('clean') {
       environment {
-        TF_PLAN_NAME = sh(returnStdout: true, script: "${echo $GIT_COMMIT | cut -c1-7}-${env.GIT_COMMIT_AUTHOR}.plan")
+        TF_PLAN_NAME = sh(returnStdout: true, script: '${echo $GIT_COMMIT | cut -c1-7}-${env.GIT_COMMIT_AUTHOR}.plan')
       }
       steps {
         sh 'env'
