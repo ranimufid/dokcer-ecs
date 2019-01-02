@@ -46,9 +46,7 @@ pipeline {
     }
     stage ('terraform plan'){
       environment {
-        ansiColor('xterm') {
-          TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -no-color -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
-        }
+        TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -no-color -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
       }
       steps {
           sh "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape"
