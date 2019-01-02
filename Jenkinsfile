@@ -46,7 +46,7 @@ pipeline {
     }
     stage ('terraform plan'){
       environment {
-        TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
+        TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -no-color -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
       }
       steps {
         sh "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape"
@@ -65,7 +65,7 @@ pipeline {
               try {
                 input message: "Apply plan?", ok: 'Apply', parameters: [
                   [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this'],
-                  [$class: 'TextParameterDefinition', defaultValue: "$GIT_COMMIT_AUTHOR", description: 'A multiple lines text', name: 'aText']
+                  [$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN", description: 'A multiple lines text', name: 'aText']
                   ]
                 // input message: "Apply plan?", ok: 'Apply', parameters [
                 //   [$class: 'TextParameterDefinition', defaultValue: 'a text\nwith several lines', description: 'A multiple lines text', name: 'aText']
