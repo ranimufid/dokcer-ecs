@@ -61,7 +61,7 @@ pipeline {
             script {
               try {
                 input message: 'Apply Plan?', ok: 'Apply', parameters: [
-                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: "${env.TF_LANDSCAPE_PLAN}", name: 'Please confirm you agree with this']
+                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: '$TF_LANDSCAPE_PLAN', name: 'Please confirm you agree with this']
                   ]
                 apply = true
               } catch (err) {
