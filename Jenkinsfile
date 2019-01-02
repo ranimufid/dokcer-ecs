@@ -1,10 +1,8 @@
 pipeline {
   agent any
   environment {
-    GIT_COMMIT_AUTHOR = sh (
-      script: "git show -s --pretty=%an",
-      returnStdout: true).trim()
-    // GIT_COMMIT_AUTHOR=sh '\$(git show -s --pretty=%an)'
+    GIT_COMMIT_AUTHOR = sh (script: "git show -s --pretty=%an",returnStdout: true).trim()
+    GIT_COMMIT_SHORT_SHA = sh (script: "echo $GIT_COMMIT | cut -c1-7",returnStdout: true).trim()
     AWS_ACCESS_KEY_ID = credentials('terra-access-key');
     AWS_SECRET_ACCESS_KEY = credentials('terra-secret-access-key');
     AWS_DEFAULT_REGION = 'eu-central-1'
@@ -12,7 +10,8 @@ pipeline {
     SLACK_TEAM_DOMAIN = credentials('slack_team_domain');
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
-    TF_PLAN_NAME = sh(returnStdout: true, script: '$(echo $GIT_COMMIT | cut -c1-7)-${env.GIT_COMMIT_AUTHOR}.plan')
+    // TF_PLAN_NAME = sh(returnStdout: true, script: '$(}-${env.GIT_COMMIT_AUTHOR}.plan')
+    TF_PLAN_NAME = "${env.GIT_COMMIT_AUTHOR}.${env.GIT_COMMIT_SHORT_SHA}.plan"
   }
   stages {
     stage ('clean') {
