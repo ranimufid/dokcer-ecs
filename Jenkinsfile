@@ -11,11 +11,11 @@ pipeline {
   }
   stages {
     stage ('clean') {
+      environment {
+        TF_PLAN_NAME = sh(returnStdout: true, script: "${echo $GIT_COMMIT | cut -c1-7}-\$(git show -s --pretty=%an).plan")
+      }
       steps {
         sh 'env'
-        environment {
-          TF_PLAN_NAME = sh(returnStdout: true, script: "${echo $GIT_COMMIT | cut -c1-7}-\$(git show -s --pretty=%an).plan")
-        }
         script {
           if (fileExists(".terraform/terraform.tfstate")) {
             sh "rm -rf .terraform/terraform.tfstate"
