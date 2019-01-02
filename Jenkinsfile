@@ -33,8 +33,8 @@ pipeline {
           -backend-config="key=$TF_S3_STATE_BUCKET_KEY/terraform.tfstate" \
           -backend-config="region=eu-central-1" \
           -backend-config="private=private" \
-          -backend-config="encrypt=true"'
-        sh 'terraform get --update'
+          -backend-config="encrypt=true" && \
+          terraform get --update'
       }
     }
     stage ('terraform plan'){
