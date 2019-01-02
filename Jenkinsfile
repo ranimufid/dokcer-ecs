@@ -59,11 +59,8 @@ pipeline {
                 input message: 'Apply Plan?', ok: 'Apply'
                 apply = true
               } catch (err) {
-                slackSend (color: 'warning', message: "Terraform plan discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 apply = false
                 currentBuild.result = 'UNSTABLE'
-                unstash 'terraform-plan'
-                sh 'rm terraform/aws-rds/$TF_PLAN_NAME'
               }
             }
           }
@@ -82,7 +79,11 @@ pipeline {
                     slackSend (color: 'danger', message: "Terraform apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                     currentBuild.result = 'FAILURE'
                 }
-                // sh "terraform apply ${env.TF_PLAN_NAME}"
+              }
+              else {
+                slackSend (color: 'warning', message: "Terraform plan discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                unstash 'terraform-plan'
+                sh 'rm terraform/aws-rds/$TF_PLAN_NAME'
               }
             }
           }
