@@ -42,9 +42,11 @@ pipeline {
       }
     }
     stage ('terraform plan'){
+      environment {
+        TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
+      }
       steps {
         sh "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape"
-        TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
         stash name: "terraform-plan", includes: "terraform/aws-rds/${env.TF_PLAN_NAME}"
         sh 'env'
       }
