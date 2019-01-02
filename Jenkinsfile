@@ -64,7 +64,7 @@ pipeline {
             script {
               try {
                 input message: "Apply plan?", ok: 'Apply', parameters: [
-                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some descriptions', name: 'Please confirm you agree with this'],
+                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this'],
                   [$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN i", description: 'A multiple lines text', name: 'aText']
                   ]
                 // input message: "Apply plan?", ok: 'Apply', parameters [
