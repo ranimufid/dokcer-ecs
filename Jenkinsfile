@@ -15,7 +15,7 @@ pipeline {
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
     TF_PLAN_NAME = "${env.GIT_COMMIT_AUTHOR}-${env.GIT_COMMIT_SHORT_SHA}.plan"
   }
-  ansiColor('xterm') {
+  wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
     stages {
       stage ('clean') {
         steps {
