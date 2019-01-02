@@ -49,7 +49,7 @@ pipeline {
     stage ('terraform apply'){
       steps {
         sh 'env'
-        slackSend (color: 'good', message: "A new terraform plan was generated (<${env.BUILD_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+        slackSend (color: 'good', message: "A new terraform plan was generated (<${env.RUN_DISPLAY_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
         script {
           stage ('slack-prompt'){
             script {
