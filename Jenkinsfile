@@ -12,7 +12,6 @@ pipeline {
   stages {
     stage('terraform fmt') {
       steps {
-        checkout scm
         sh "cd terraform/aws-rds/ && terraform fmt -check=true -diff=true"
       }
     }
