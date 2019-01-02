@@ -68,8 +68,9 @@ pipeline {
           stage ('terraform-apply'){
             script {
               if (apply) {
-                unstash 'plan'
-                sh 'env'
+                unstash 'terraform-plan'
+                sh 'aws s3 ls'
+                // sh "terraform apply ${env.TF_PLAN_NAME}"
               }
             }
           }
