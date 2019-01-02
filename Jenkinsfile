@@ -31,20 +31,31 @@ pipeline {
         sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape'
       }
     }
-    stage ('slack'){
+    stage ('terraform apply'){
       steps {
         slackSend (color: 'good', message: "A new terraform plan was generated (<${env.BUILD_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
         script {
-          try {
-            input message: 'Apply Plan?', ok: 'Apply'
-            apply = true
-          } catch (err) {
-              slackSend (color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
-              apply = false
-              currentBuild.result = 'UNSTABLE'
+          stage ('slack-prompt'){
+            script {
+              try {
+                input message: 'Apply Plan?', ok: 'Apply'
+                apply = true
+              } catch (err) {
+                slackSend (color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                apply = false
+                currentBuild.result = 'UNSTABLE'
+              }
+            }
           }
         }
       }
     }
+    // stage ('apply'){
+    //   steps {
+    //     script {
+
+    //     }
+    //   }
+    // }
   }
 }
