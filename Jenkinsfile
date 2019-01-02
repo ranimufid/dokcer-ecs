@@ -2,7 +2,7 @@ pipeline {
   agent any
   environment {
     GIT_COMMIT_AUTHOR = sh (
-      script: 'git --no-pager show -s --format=%an',
+      script: 'git --no-pager show -s --format=\'%ae\'',
       returnStdout: true).trim()
     AWS_ACCESS_KEY_ID = credentials('terra-access-key');
     AWS_SECRET_ACCESS_KEY = credentials('terra-secret-access-key');
