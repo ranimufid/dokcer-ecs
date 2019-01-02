@@ -66,19 +66,21 @@ pipeline {
             slackSend (color: 'good', message: "A new terraform plan was generated (<${env.RUN_DISPLAY_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
           }
           stage ('user-prompt'){
-            script {
-              try {
-                input message: "Apply plan?", ok: 'Apply', parameters: [
-                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this'],
-                  [$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN i", description: 'A multiple lines text', name: 'aText']
-                  ]
-                // input message: "Apply plan?", ok: 'Apply', parameters [
-                //   [$class: 'TextParameterDefinition', defaultValue: 'a text\nwith several lines', description: 'A multiple lines text', name: 'aText']
-                // ]
-                apply = true
-              } catch (err) {
-                apply = false
-                currentBuild.result = 'UNSTABLE'
+            ansiColor('xterm') {
+              script {
+                try {
+                  input message: "Apply plan?", ok: 'Apply', parameters: [
+                    [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this'],
+                    [$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN", description: 'A multiple lines text', name: 'aText']
+                    ]
+                  // input message: "Apply plan?", ok: 'Apply', parameters [
+                  //   [$class: 'TextParameterDefinition', defaultValue: 'a text\nwith several lines', description: 'A multiple lines text', name: 'aText']
+                  // ]
+                  apply = true
+                } catch (err) {
+                  apply = false
+                  currentBuild.result = 'UNSTABLE'
+                }
               }
             }
           }
