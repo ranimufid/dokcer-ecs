@@ -48,7 +48,7 @@ pipeline {
       steps {
         sh "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape"
         stash name: "terraform-plan", includes: "terraform/aws-rds/${env.TF_PLAN_NAME}"
-        sh 'env'
+        // sh 'env'
       }
     }
     stage ('terraform apply'){
@@ -63,10 +63,9 @@ pipeline {
                 // input message: "Apply plan?", ok: 'Apply', parameters: [
                 //   [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this']
                 //   ]
-                input message: "Apply plan?", ok: 'Apply', parameters{ text(name: 'mytextparam', 
-                 defaultValue: 'Default lines for the parameter', 
-                 description: 'A description of this param')
-                 }
+                input message: "Apply plan?", ok: 'Apply', parameters [
+                  [$class: 'TextParameterDefinition', defaultValue: 'a text\nwith several lines', description: 'A multiple lines text', name: 'aText']
+                ]
                 apply = true
               } catch (err) {
                 apply = false
