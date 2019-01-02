@@ -52,7 +52,9 @@ pipeline {
           sh "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape"
           stash name: "terraform-plan", includes: "terraform/aws-rds/${env.TF_PLAN_NAME}"
           script {
-            TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -no-color -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
+             wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
+               TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -no-color -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
+             }
           }
           sh 'env'
         }
