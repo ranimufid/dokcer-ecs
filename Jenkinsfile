@@ -11,12 +11,14 @@ pipeline {
   }
   stages {
     stage ('clean') {
-      script {
-        if (fileExists(".terraform/terraform.tfstate")) {
-          sh "rm -rf .terraform/terraform.tfstate"
+      steps {
+        script {
+          if (fileExists(".terraform/terraform.tfstate")) {
+            sh "rm -rf .terraform/terraform.tfstate"
           }
+        }
+        sh "terraform --version"
       }
-      sh "terraform --version"
     }
     stage('terraform fmt') {
       steps {
