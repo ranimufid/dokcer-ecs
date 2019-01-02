@@ -12,7 +12,7 @@ pipeline {
   stages {
     stage ('clean') {
       environment {
-        TF_PLAN_NAME = sh(returnStdout: true, script: "${echo $GIT_COMMIT | cut -c1-7}-${(git show -s --pretty=%an)}.plan")
+        TF_PLAN_NAME = sh(returnStdout: true, script: "${echo $GIT_COMMIT | cut -c1-7}-${git show --pretty=%an -s}.plan")
       }
       steps {
         sh 'env'
