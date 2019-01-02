@@ -67,9 +67,19 @@ pipeline {
           }
           stage ('terraform-apply'){
             script {
+              unstash 'terraform-plan'
               if (apply) {
-                unstash 'terraform-plan'
-                sh 'aws s3 ls'
+                if (fileExists("apply.status")) {
+                    sh "rm apply.status"
+                }
+                sh 'set +e; terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
+                def applyExitCode = readFile('apply.status').trim()
+                if (applyExitCode == "0") {
+                    slackSend channel: '#ci', color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                } else {
+                    slackSend channel: '#ci', color: 'danger', message: "Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                    currentBuild.result = 'FAILURE'
+                }
                 // sh "terraform apply ${env.TF_PLAN_NAME}"
               }
             }
@@ -77,12 +87,5 @@ pipeline {
         }
       }
     }
-    // stage ('apply'){
-    //   steps {
-    //     script {
-
-    //     }
-    //   }
-    // }
   }
 }
