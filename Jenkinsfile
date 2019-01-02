@@ -34,8 +34,8 @@ pipeline {
           -backend-config="region=eu-central-1" \
           -backend-config="private=private" \
           -backend-config="encrypt=true"'
+        sh 'terraform get --update'
       }
-      sh 'terraform get --update'
     }
     stage ('terraform plan'){
       steps {
