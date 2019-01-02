@@ -10,7 +10,6 @@ pipeline {
     SLACK_TEAM_DOMAIN = credentials('slack_team_domain');
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
-    // TF_PLAN_NAME = sh(returnStdout: true, script: '$(}-${env.GIT_COMMIT_AUTHOR}.plan')
     TF_PLAN_NAME = "${env.GIT_COMMIT_AUTHOR}-${env.GIT_COMMIT_SHORT_SHA}.plan"
   }
   stages {
@@ -44,7 +43,7 @@ pipeline {
     }
     stage ('terraform plan'){
       steps {
-        sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape'
+        sh 'cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape'
         // stash includes:
       }
     }
