@@ -63,9 +63,10 @@ pipeline {
                 // input message: "Apply plan?", ok: 'Apply', parameters: [
                 //   [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this']
                 //   ]
-                input message: "$TF_LANDSCAPE_PLAN", ok: 'Apply', parameters: [
-                  [$class: 'TextParameterDefinition', defaultValue: "some text", description: 'A multiple lines text', name: 'aText']
-                  ]
+                input message: "Apply plan?", ok: 'Apply', parameters{ text(name: 'mytextparam', 
+                 defaultValue: 'Default lines for the parameter', 
+                 description: 'A description of this param')
+                 }
                 apply = true
               } catch (err) {
                 apply = false
