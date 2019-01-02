@@ -10,6 +10,14 @@ pipeline {
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
   }
   stages {
+    stage ('clean') {
+      script {
+        if (fileExists(".terraform/terraform.tfstate")) {
+          sh "rm -rf .terraform/terraform.tfstate"
+          }
+      }
+      sh "terraform --version"
+    }
     stage('terraform fmt') {
       steps {
         sh "cd terraform/aws-rds/ && terraform fmt -check=true -diff=true"
@@ -25,6 +33,7 @@ pipeline {
           -backend-config="private=private" \
           -backend-config="encrypt=true"'
       }
+      sh 'terraform get --update'
     }
     stage ('terraform plan'){
       steps {
@@ -41,7 +50,7 @@ pipeline {
                 input message: 'Apply Plan?', ok: 'Apply'
                 apply = true
               } catch (err) {
-                slackSend (color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                slackSend (color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 apply = false
                 currentBuild.result = 'UNSTABLE'
               }
