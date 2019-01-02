@@ -49,9 +49,11 @@ pipeline {
     }
     stage ('terraform apply'){
       steps {
-        slackSend (color: 'good', message: "A new terraform plan was generated (<${env.RUN_DISPLAY_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
         script {
-          stage ('slack-prompt'){
+          stage ('slack-notify') {
+            slackSend (color: 'good', message: "A new terraform plan was generated (<${env.RUN_DISPLAY_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+          }
+          stage ('user-prompt'){
             script {
               try {
                 input message: 'Apply Plan?', ok: 'Apply'
@@ -63,7 +65,7 @@ pipeline {
               }
             }
           }
-          stage ('apply'){
+          stage ('terraform-apply'){
             script {
               if (apply) {
                 sh 'env'
