@@ -44,7 +44,7 @@ pipeline {
     stage ('terraform plan'){
       steps {
         sh "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape"
-        stash name: "terraform-plan", includes: "${env.TF_PLAN_NAME}"
+        stash name: "terraform-plan", includes: "terraform/aws-rds/${env.TF_PLAN_NAME}"
       }
     }
     stage ('terraform apply'){
