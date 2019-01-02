@@ -59,9 +59,11 @@ pipeline {
                 input message: 'Apply Plan?', ok: 'Apply'
                 apply = true
               } catch (err) {
-                slackSend (color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                slackSend (color: 'warning', message: "Terraform plan discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 apply = false
                 currentBuild.result = 'UNSTABLE'
+                unstash 'terraform-plan'
+                sh 'rm terraform/aws-rds/$TF_PLAN_NAME'
               }
             }
           }
@@ -72,12 +74,12 @@ pipeline {
                 if (fileExists("apply.status")) {
                     sh "rm apply.status"
                 }
-                sh 'set +e; terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
+                sh 'set +e; terraform apply terraform/aws-rds/$TF_PLAN_NAME; echo \$? > apply.status'
                 def applyExitCode = readFile('apply.status').trim()
                 if (applyExitCode == "0") {
                     slackSend (color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 } else {
-                    slackSend (color: 'danger', message: "Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                    slackSend (color: 'danger', message: "Terraform apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                     currentBuild.result = 'FAILURE'
                 }
                 // sh "terraform apply ${env.TF_PLAN_NAME}"
