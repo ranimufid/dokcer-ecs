@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-    GIT_COMMIT_AUTHOR=sh(returnStdout: true, script: '${git show -s --pretty=%an}')
+    GIT_COMMIT_AUTHOR=sh(returnStdout: true, script: "${git show -s --pretty=%an}")
     AWS_ACCESS_KEY_ID = credentials('terra-access-key');
     AWS_SECRET_ACCESS_KEY = credentials('terra-secret-access-key');
     AWS_DEFAULT_REGION = 'eu-central-1'
