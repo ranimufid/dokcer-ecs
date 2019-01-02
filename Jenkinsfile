@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  options {
+    ansiColor('xterm')
+  }
   environment {
     GIT_COMMIT_AUTHOR = sh (script: "git show -s --pretty=%an",returnStdout: true).trim()
     GIT_COMMIT_SHORT_SHA = sh (script: "echo $GIT_COMMIT | cut -c1-7",returnStdout: true).trim()
