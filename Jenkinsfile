@@ -2,7 +2,7 @@ pipeline {
   agent any
   environment {
     GIT_COMMIT_AUTHOR = sh (
-      script: '$(git show -s --pretty=%an)',
+      script: "$(git show -s --pretty=%an)",
       returnStdout: true).trim()
     // GIT_COMMIT_AUTHOR=sh '\$(git show -s --pretty=%an)'
     AWS_ACCESS_KEY_ID = credentials('terra-access-key');
@@ -15,9 +15,9 @@ pipeline {
   }
   stages {
     stage ('clean') {
-      environment {
-        TF_PLAN_NAME = sh(returnStdout: true, script: "${echo $GIT_COMMIT | cut -c1-7}-${env.GIT_COMMIT_AUTHOR}.plan")
-      }
+      // environment {
+      //   TF_PLAN_NAME = sh(returnStdout: true, script: "${echo $GIT_COMMIT | cut -c1-7}-${env.GIT_COMMIT_AUTHOR}.plan")
+      // }
       steps {
         sh 'env'
         script {
