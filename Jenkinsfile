@@ -8,6 +8,7 @@ pipeline {
     SLACK_TEAM_DOMAIN = credentials('slack_team_domain');
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
+    TF_PLAN_NAME = sh '$(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan'
   }
   stages {
     stage ('clean') {
@@ -23,13 +24,11 @@ pipeline {
     }
     stage('terraform fmt') {
       steps {
-        sh 'env'
         sh "cd terraform/aws-rds/ && terraform fmt -check=true -diff=true"
       }
     }
     stage ('terraform init'){
       steps {
-        sh 'env'
         sh 'cd terraform/aws-rds; \
         terraform init \
           -backend-config="bucket=$TF_S3_STATE_BUCKET" \
@@ -42,13 +41,12 @@ pipeline {
     }
     stage ('terraform plan'){
       steps {
-        sh 'env'
         sh 'cd terraform/aws-rds && terraform plan -out $(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan -input=false -detailed-exitcode | landscape'
+        // stash includes:
       }
     }
     stage ('terraform apply'){
       steps {
-        sh 'env'
         slackSend (color: 'good', message: "A new terraform plan was generated (<${env.RUN_DISPLAY_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
         script {
           stage ('slack-prompt'){
