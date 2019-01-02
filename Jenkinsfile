@@ -1,7 +1,8 @@
 pipeline {
   agent any
   options {
-    ansiColor('xterm')
+    // ansiColor('xterm')
+    ansiColor colorMapName: 'XTerm'
   }
   environment {
     GIT_COMMIT_AUTHOR = sh (script: "git show -s --pretty=%an",returnStdout: true).trim()
@@ -52,9 +53,7 @@ pipeline {
           sh "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape"
           stash name: "terraform-plan", includes: "terraform/aws-rds/${env.TF_PLAN_NAME}"
           script {
-             wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
-               TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
-             }
+            TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
           }
           sh 'env'
         }
@@ -67,21 +66,19 @@ pipeline {
             slackSend (color: 'good', message: "A new terraform plan was generated (<${env.RUN_DISPLAY_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
           }
           stage ('user-prompt'){
-            ansiColor('xterm') {
-              script {
-                try {
-                  input message: "Apply plan?", ok: 'Apply', parameters: [
-                    [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this'],
-                    [$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN", description: 'A multiple lines text', name: 'aText']
-                    ]
-                  // input message: "Apply plan?", ok: 'Apply', parameters [
-                  //   [$class: 'TextParameterDefinition', defaultValue: 'a text\nwith several lines', description: 'A multiple lines text', name: 'aText']
-                  // ]
-                  apply = true
-                } catch (err) {
-                  apply = false
-                  currentBuild.result = 'UNSTABLE'
-                }
+            script {
+              try {
+                input message: "Apply plan?", ok: 'Apply', parameters: [
+                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this'],
+                  [$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN", description: 'A multiple lines text', name: 'aText']
+                  ]
+                // input message: "Apply plan?", ok: 'Apply', parameters [
+                //   [$class: 'TextParameterDefinition', defaultValue: 'a text\nwith several lines', description: 'A multiple lines text', name: 'aText']
+                // ]
+                apply = true
+              } catch (err) {
+                apply = false
+                currentBuild.result = 'UNSTABLE'
               }
             }
           }
