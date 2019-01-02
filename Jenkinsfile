@@ -60,12 +60,12 @@ pipeline {
           stage ('user-prompt'){
             script {
               try {
-                // input message: "Apply plan?", ok: 'Apply', parameters: [
-                //   [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this']
-                //   ]
-                input message: "Apply plan?", ok: 'Apply', parameters [
-                  [$class: 'TextParameterDefinition', defaultValue: 'a text\nwith several lines', description: 'A multiple lines text', name: 'aText']
-                ]
+                input message: "Apply plan?", ok: 'Apply', parameters: [
+                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this']
+                  ]
+                // input message: "Apply plan?", ok: 'Apply', parameters [
+                //   [$class: 'TextParameterDefinition', defaultValue: 'a text\nwith several lines', description: 'A multiple lines text', name: 'aText']
+                // ]
                 apply = true
               } catch (err) {
                 apply = false
