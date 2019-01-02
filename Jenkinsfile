@@ -8,7 +8,7 @@ pipeline {
     SLACK_TEAM_DOMAIN = credentials('slack_team_domain');
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
-    TF_PLAN_NAME = sh '$(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan'
+    TF_PLAN_NAME = sh "$(echo $GIT_COMMIT | cut -c1-7)-$(git show -s --pretty=%an).plan"
   }
   stages {
     stage ('clean') {
