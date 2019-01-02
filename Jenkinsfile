@@ -44,7 +44,9 @@ pipeline {
     stage ('terraform plan'){
       steps {
         sh "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape"
+        TF_LANDSCAPE_PLAN = sh (returnStdout: true, script: "cd terraform/aws-rds && terraform plan -out ${env.TF_PLAN_NAME} -input=false -detailed-exitcode | landscape").trim()
         stash name: "terraform-plan", includes: "terraform/aws-rds/${env.TF_PLAN_NAME}"
+        sh 'env'
       }
     }
     stage ('terraform apply'){
@@ -56,11 +58,8 @@ pipeline {
           stage ('user-prompt'){
             script {
               try {
-                // input message: 'Apply Plan?', ok: 'Apply', parameters: [
-                //   [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this']
-                //   ]
                 input message: 'Apply Plan?', ok: 'Apply', parameters: [
-                  [description: 'some description']
+                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'some description', name: 'Please confirm you agree with this']
                   ]
                 apply = true
               } catch (err) {
