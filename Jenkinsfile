@@ -11,7 +11,7 @@ pipeline {
     TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
     TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
     // TF_PLAN_NAME = sh(returnStdout: true, script: '$(}-${env.GIT_COMMIT_AUTHOR}.plan')
-    TF_PLAN_NAME = "${env.GIT_COMMIT_AUTHOR}.${env.GIT_COMMIT_SHORT_SHA}.plan"
+    TF_PLAN_NAME = "${env.GIT_COMMIT_AUTHOR}-${env.GIT_COMMIT_SHORT_SHA}.plan"
   }
   stages {
     stage ('clean') {
