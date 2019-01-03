@@ -56,41 +56,40 @@ pipeline {
       }
     }
     stage ('terraform apply'){
-      when ( "$TF_LANDSCAPE_PLAN" != "No changes.") {
-        steps {
-          script {
-            stage ('slack-notify') {
-              slackSend (color: 'good', message: "A new terraform plan was generated (<${env.RUN_DISPLAY_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
-            }
-            stage ('user-prompt'){
-              script {
-                try {
-                  input message: "Apply plan?", ok: 'Apply', parameters: [[$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN", description: 'Terraform would like to apply the following changes', name: 'aText']]
-                  apply = true
-                } catch (err) {
-                  apply = false
-                  currentBuild.result = 'UNSTABLE'
-                }
+      when { environment name: 'TF_LANDSCAPE_PLAN', value: 'No changes.' }
+      steps {
+        script {
+          stage ('slack-notify') {
+            slackSend (color: 'good', message: "A new terraform plan was generated (<${env.RUN_DISPLAY_URL}|here>): ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+          }
+          stage ('user-prompt'){
+            script {
+              try {
+                input message: "Apply plan?", ok: 'Apply', parameters: [[$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN", description: 'Terraform would like to apply the following changes', name: 'aText']]
+                apply = true
+              } catch (err) {
+                apply = false
+                currentBuild.result = 'UNSTABLE'
               }
             }
-            stage ('terraform-apply'){
-              script {
+          }
+          stage ('terraform-apply'){
+            script {
+              unstash 'terraform-plan'
+              if (apply) {
+                sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
+                applyExitCode = readFile('apply.status').trim()
+                if (applyExitCode == "0") {
+                    slackSend (color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                } else {
+                    slackSend (color: 'danger', message: "Terraform apply failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                    currentBuild.result = 'FAILURE'
+                }
+              }
+              else {
+                slackSend (color: 'warning', message: "Terraform plan discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 unstash 'terraform-plan'
-                if (apply) {
-                  sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
-                  applyExitCode = readFile('apply.status').trim()
-                  if (applyExitCode == "0") {
-                      slackSend (color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
-                  } else {
-                      slackSend (color: 'danger', message: "Terraform apply failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
-                      currentBuild.result = 'FAILURE'
-                  }
-                }
-                else {
-                  slackSend (color: 'warning', message: "Terraform plan discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
-                  unstash 'terraform-plan'
-                  sh 'rm terraform/aws-rds/$TF_PLAN_NAME'
-                }
+                sh 'rm terraform/aws-rds/$TF_PLAN_NAME'
               }
             }
           }
