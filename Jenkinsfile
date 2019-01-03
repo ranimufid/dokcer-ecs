@@ -23,6 +23,9 @@ pipeline {
           if (fileExists(".terraform/terraform.tfstate")) {
             sh "rm -rf .terraform/terraform.tfstate"
           }
+          if (fileExists("apply.status")) {
+            sh "rm apply.status"
+          }
         }
         sh "terraform --version"
       }
@@ -76,15 +79,12 @@ pipeline {
             script {
               unstash 'terraform-plan'
               if (apply) {
-                if (fileExists("apply.status")) {
-                    sh "rm apply.status"
-                }
-                sh 'set +e; terraform apply terraform/aws-rds/$TF_PLAN_NAME; echo \$? > apply.status'
+                sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
                 def applyExitCode = readFile('apply.status').trim()
                 if (applyExitCode == "0") {
                     slackSend (color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 } else {
-                    slackSend (color: 'danger', message: "Terraform apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                    slackSend (color: 'danger', message: "Terraform apply failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                     currentBuild.result = 'FAILURE'
                 }
               }
