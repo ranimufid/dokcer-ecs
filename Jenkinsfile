@@ -56,7 +56,10 @@ pipeline {
       }
     }
     stage ('terraform apply'){
-      when { environment name: 'TF_LANDSCAPE_PLAN', value: 'No changes.' }
+      when { 
+        environment name: 'TF_LANDSCAPE_PLAN', 
+        value: 'No changes.' 
+      }
       steps {
         script {
           stage ('slack-notify') {
