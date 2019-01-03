@@ -64,7 +64,7 @@ pipeline {
           stage ('user-prompt'){
             script {
               try {
-                input message: "Apply plan?", ok: 'Apply', parameters: [[$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN"]]
+                input message: "Apply plan?", ok: 'Apply', parameters: [[$class: 'TextParameterDefinition', defaultValue: "$TF_LANDSCAPE_PLAN", description: 'A multiple lines text', name: 'aText']]
                 apply = true
               } catch (err) {
                 apply = false
