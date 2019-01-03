@@ -17,7 +17,7 @@ variable "engine_version" {
   description = "Engine version"
 
   default = {
-    mysql    = "5.6.22"
+    mysql    = "5.7.23"
     postgres = "9.4.1"
   }
 }
