@@ -1,6 +1,6 @@
 variable "identifier" {
   description = "Identifier for your DB, example: guestbookrdsinstance"
-  default     = "guestbookrdsinstance"
+  default     = "guestbookrdsinstance-new"
 }
 
 variable "storage" {
