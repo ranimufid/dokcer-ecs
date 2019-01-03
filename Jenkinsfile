@@ -80,7 +80,7 @@ pipeline {
               unstash 'terraform-plan'
               if (apply) {
                 sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
-                def applyExitCode = readFile('apply.status').trim()
+                applyExitCode = readFile('apply.status').trim()
                 if (applyExitCode == "0") {
                     slackSend (color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 } else {
