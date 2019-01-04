@@ -8,27 +8,11 @@ pipeline {
     GIT_COMMIT_SHORT_SHA = sh (script: "echo $GIT_COMMIT | cut -c1-7",returnStdout: true).trim()
     AWS_ACCESS_KEY_ID = credentials('terra-access-key');
     AWS_SECRET_ACCESS_KEY = credentials('terra-secret-access-key');
-    AWS_DEFAULT_REGION = 'eu-central-1'
     SLACK_TOKEN = credentials('slack_tocken');
     SLACK_TEAM_DOMAIN = credentials('slack_team_domain');
-    TF_S3_STATE_BUCKET = 'tf-state-file-myjenkins'
-    TF_S3_STATE_BUCKET_KEY = 'dokcer-ecs'
     TF_PLAN_NAME = "${env.GIT_COMMIT_AUTHOR}-${env.GIT_COMMIT_SHORT_SHA}.plan"
   }
   stages {
-    // stage ('clean') {
-    //   steps {
-    //     script {
-    //       if (fileExists(".terraform/terraform.tfstate")) {
-    //         sh "rm -rf .terraform/terraform.tfstate"
-    //       }
-    //       if (fileExists("apply.status")) {
-    //         sh "rm apply.status"
-    //       }
-    //     }
-    //     sh "terraform --version"
-    //   }
-    // }
     stage('terraform fmt') {
       steps {
         sh "cd terraform/aws-rds/ && terraform fmt -check=true -diff=true"
@@ -80,14 +64,14 @@ pipeline {
                 sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
                 applyExitCode = readFile('terraform/aws-rds/apply.status').trim()
                 if (applyExitCode == "0") {
-                    slackSend (color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                    slackSend (color: 'good', message: "Terraform changes applied ${env.JOB_NAME} - <${env.RUN_DISPLAY_URL}|${env.BUILD_NUMBER}>", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 } else {
-                    slackSend (color: 'danger', message: "Terraform apply failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                    slackSend (color: 'danger', message: "Terraform apply failed: ${env.JOB_NAME} - <${env.RUN_DISPLAY_URL}|${env.BUILD_NUMBER}>", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                     currentBuild.result = 'FAILURE'
                 }
               }
               else {
-                slackSend (color: 'warning', message: "Terraform plan discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                slackSend (color: 'warning', message: "Terraform plan discarded: ${env.JOB_NAME} - <${env.RUN_DISPLAY_URL}|${env.BUILD_NUMBER}>", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 unstash 'terraform-plan'
                 sh 'rm terraform/aws-rds/$TF_PLAN_NAME'
               }
