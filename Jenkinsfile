@@ -77,7 +77,7 @@ pipeline {
             script {
               unstash 'terraform-plan'
               if (apply) {
-                sh 'aws s3 ls && aws s3 cp terraform/aws-rds/$TF_PLAN_NAME s3://terraform-remote-state-storage-s3-jenkins-pipeline && aws s3 cp s3://terraform-remote-state-storage-s3-jenkins-pipeline terraform/aws-rds/$TF_PLAN_NAME'
+                sh 'aws s3 ls s3://terraform-remote-state-storage-s3-jenkins-pipeline/ && aws s3 cp terraform/aws-rds/$TF_PLAN_NAME s3://terraform-remote-state-storage-s3-jenkins-pipeline/ && aws s3 cp s3://terraform-remote-state-storage-s3-jenkins-pipeline/$TF_PLAN_NAME terraform/aws-rds/$TF_PLAN_NAME'
                 // sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
                 // applyExitCode = readFile('terraform/aws-rds/apply.status').trim()
                 // if (applyExitCode == "0") {
