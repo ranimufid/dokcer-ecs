@@ -16,19 +16,19 @@ pipeline {
     TF_PLAN_NAME = "${env.GIT_COMMIT_AUTHOR}-${env.GIT_COMMIT_SHORT_SHA}.plan"
   }
   stages {
-    stage ('clean') {
-      steps {
-        script {
-          if (fileExists(".terraform/terraform.tfstate")) {
-            sh "rm -rf .terraform/terraform.tfstate"
-          }
-          if (fileExists("apply.status")) {
-            sh "rm apply.status"
-          }
-        }
-        sh "terraform --version"
-      }
-    }
+    // stage ('clean') {
+    //   steps {
+    //     script {
+    //       if (fileExists(".terraform/terraform.tfstate")) {
+    //         sh "rm -rf .terraform/terraform.tfstate"
+    //       }
+    //       if (fileExists("apply.status")) {
+    //         sh "rm apply.status"
+    //       }
+    //     }
+    //     sh "terraform --version"
+    //   }
+    // }
     stage('terraform fmt') {
       steps {
         sh "cd terraform/aws-rds/ && terraform fmt -check=true -diff=true"
@@ -36,14 +36,10 @@ pipeline {
     }
     stage ('terraform init'){
       steps {
-        sh 'cd terraform/aws-rds; \
-        terraform init \
-          -backend-config="bucket=$TF_S3_STATE_BUCKET" \
-          -backend-config="key=$TF_S3_STATE_BUCKET_KEY/terraform.tfstate" \
-          -backend-config="region=eu-central-1" \
-          -backend-config="private=private" \
-          -backend-config="encrypt=true" && \
-          terraform get --update'
+        sh 'cd terraform/aws-rds && \
+        terraform --version && \
+        terraform init && \
+        terraform get --update'
       }
     }
     stage ('terraform plan'){
