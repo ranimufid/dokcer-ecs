@@ -64,7 +64,7 @@ pipeline {
                 sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
                 applyExitCode = readFile('terraform/aws-rds/apply.status').trim()
                 if (applyExitCode == "0") {
-                    slackSend (color: 'good', message: "Terraform changes applied ${env.JOB_NAME} - <${env.RUN_DISPLAY_URL}|${env.BUILD_NUMBER}>", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                    slackSend (color: 'good', message: "Terraform changes applied: ${env.JOB_NAME} - <${env.RUN_DISPLAY_URL}|${env.BUILD_NUMBER}>", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                 } else {
                     slackSend (color: 'danger', message: "Terraform apply failed: ${env.JOB_NAME} - <${env.RUN_DISPLAY_URL}|${env.BUILD_NUMBER}>", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
                     currentBuild.result = 'FAILURE'
