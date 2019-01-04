@@ -5,7 +5,7 @@ variable "identifier" {
 
 variable "storage" {
   description = "Storage size in GB"
-  default     = "5"
+  default     = "6"
 }
 
 variable "engine" {
