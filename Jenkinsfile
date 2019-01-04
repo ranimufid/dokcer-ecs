@@ -77,15 +77,14 @@ pipeline {
             script {
               unstash 'terraform-plan'
               if (apply) {
-                sh 'aws s3 ls s3://terraform-remote-state-storage-s3-jenkins-pipeline/ && touch dummy.txt && aws s3 cp dummy.txt s3://terraform-remote-state-storage-s3-jenkins-pipeline/ && aws s3 cp s3://terraform-remote-state-storage-s3-jenkins-pipeline/$TF_PLAN_NAME terraform/aws-rds/$TF_PLAN_NAME'
-                // sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
-                // applyExitCode = readFile('terraform/aws-rds/apply.status').trim()
-                // if (applyExitCode == "0") {
-                //     slackSend (color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
-                // } else {
-                //     slackSend (color: 'danger', message: "Terraform apply failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
-                //     currentBuild.result = 'FAILURE'
-                // }
+                sh 'set +e; cd terraform/aws-rds && terraform apply $TF_PLAN_NAME; echo \$? > apply.status'
+                applyExitCode = readFile('terraform/aws-rds/apply.status').trim()
+                if (applyExitCode == "0") {
+                    slackSend (color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                } else {
+                    slackSend (color: 'danger', message: "Terraform apply failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
+                    currentBuild.result = 'FAILURE'
+                }
               }
               else {
                 slackSend (color: 'warning', message: "Terraform plan discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}", teamDomain: "${env.SLACK_TEAM_DOMAIN}", token: "${env.SLACK_TOKEN}")
